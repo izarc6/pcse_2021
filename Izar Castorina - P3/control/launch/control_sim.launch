@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="frequency" value="10" />
+
+  <!-- start Gazebo with an empty world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="world_name" value="$(find kobuki_gazebo)/worlds/empty.world"/>
+  </include>
+  
+  <!-- spawn the robot -->
+  <include file="$(find kobuki_gazebo)/launch/includes/robot.launch.xml"/>
+
+  <!-- control sim -->
+  <node pkg="control" type="pid_node.py" name="pid" respawn="true" output="screen">
+
+    <!-- <remap from="~desired_point" to="/input_val"/>
+    <remap from="~measured_point" to="/plant_sim/output"/>
+    -->
+
+    <remap from="~current_point" to="/odom"/>
+    <remap from="~output_twist" to="/mobile_base/commands/velocity"/>
+
+    <param name="~frequency" type="int" value="$(arg frequency)" />
+    <param name="~Kp_l" type="double" value="0.5" />
+    <param name="~Kd_l" type="double" value="0.2" />
+    <param name="~Ki_l" type="double" value="0.02" />
+    <param name="~max_integ_term_l" type="double" value="0.1" />
+    <param name="~Kp_a" type="double" value="0.5" />
+    <param name="~Kd_a" type="double" value="0.01" />
+    <param name="~Ki_a" type="double" value="0.05" />
+    <param name="~max_integ_term_a" type="double" value="0.1" />
+  </node>
+
+
+</launch>
